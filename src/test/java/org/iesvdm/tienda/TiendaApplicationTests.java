@@ -4,6 +4,7 @@ import org.iesvdm.tienda.modelo.Fabricante;
 import org.iesvdm.tienda.modelo.Producto;
 import org.iesvdm.tienda.repository.FabricanteRepository;
 import org.iesvdm.tienda.repository.ProductoRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,6 +53,8 @@ class TiendaApplicationTests {
 		var listNomPre = listProds.stream().map((s) -> "Nombre: "+s.getNombre()+" Precio: "+s.getPrecio()).toList();
 
 		listNomPre.forEach(s -> System.out.println(s));
+
+        Assertions.assertEquals(11, listNomPre.size());
 		
 	}
 	
@@ -63,6 +66,12 @@ class TiendaApplicationTests {
 	void test2() {
 		var listProds = prodRepo.findAll();
 		//TODO
+
+        var listNomPre = listProds.stream().map((s) -> "Nombre: "+s.getNombre()+" Precio: "+(s.getPrecio()*1.17)).toList();
+        //lo podemos simplificar más aun usando esto.
+        listNomPre.forEach(System.out::println);
+
+
 	}
 	
 	/**
@@ -72,6 +81,10 @@ class TiendaApplicationTests {
 	void test3() {
 		var listProds = prodRepo.findAll();
 		//TODO
+
+        var listNomPre = listProds.stream().map((s) -> "Nombre: "+(s.getNombre().toUpperCase())+" Precio: "+(s.getPrecio()*1.17)).toList();
+        //lo podemos simplificar más aun usando esto.
+        listNomPre.forEach(System.out::println);
 	}
 	
 	/**
@@ -81,6 +94,13 @@ class TiendaApplicationTests {
 	void test4() {
 		var listFabs = fabRepo.findAll();
 		//TODO
+
+        var listaFaNom= listFabs.stream().map((s)-> { String nombre = s.getNombre();
+            String iniciales = nombre.substring(0, 2).toUpperCase();
+            return "Nombre: "+nombre+" Iniciales: "+iniciales;
+
+        });
+        listaFaNom.forEach(System.out::println);
 	}
 	
 	/**
@@ -89,7 +109,13 @@ class TiendaApplicationTests {
 	@Test
 	void test5() {
 		var listFabs = fabRepo.findAll();
-		//TODO		
+        var listProds = prodRepo.findAll();
+        var listaNumFab = listProds.stream().map((s)-> ("Código fabricante con producto: "+s.getFabricante().getCodigo())).toList();
+
+        listaNumFab.forEach(System.out::println);
+		//TODO
+
+
 	}
 	
 	/**
