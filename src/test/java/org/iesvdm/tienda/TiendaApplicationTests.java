@@ -48,6 +48,11 @@ class TiendaApplicationTests {
 	void test1() {
 		var listProds = prodRepo.findAll();
 		//TODO
+
+		var listNomPre = listProds.stream().map((s) -> "Nombre: "+s.getNombre()+" Precio: "+s.getPrecio()).toList();
+
+		listNomPre.forEach(s -> System.out.println(s));
+		
 	}
 	
 	
