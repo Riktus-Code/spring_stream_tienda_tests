@@ -55,6 +55,7 @@ class TiendaApplicationTests {
 		listNomPre.forEach(s -> System.out.println(s));
 
         Assertions.assertEquals(11, listNomPre.size());
+        Assertions.assertTrue(listNomPre.contains("Nombre: Disco duro SATA3 1TB Precio: 86.99"));
 		
 	}
 	
@@ -67,9 +68,11 @@ class TiendaApplicationTests {
 		var listProds = prodRepo.findAll();
 		//TODO
 
-        var listNomPre = listProds.stream().map((s) -> "Nombre: "+s.getNombre()+" Precio: "+(s.getPrecio()*1.17)).toList();
+        var listNomPre = listProds.stream().map((s) ->s.getNombre()+" con precio "+(s.getPrecio()*1.17)+"$").toList();
         //lo podemos simplificar más aun usando esto.
         listNomPre.forEach(System.out::println);
+        Assertions.assertEquals(11, listNomPre.size());
+        Assertions.assertTrue(listNomPre.contains("Impresora HP Laserjet Pro M26nw con precio 212.40$"));
 
 
 	}
@@ -85,6 +88,9 @@ class TiendaApplicationTests {
         var listNomPre = listProds.stream().map((s) -> "Nombre: "+(s.getNombre().toUpperCase())+" Precio: "+(s.getPrecio()*1.17)).toList();
         //lo podemos simplificar más aun usando esto.
         listNomPre.forEach(System.out::println);
+
+        Assertions.assertEquals(11, listNomPre.size());
+        Assertions.assertTrue(listNomPre.contains("Nombre: Disco duro SATA3 1TB Precio: 86.99"));
 	}
 	
 	/**
@@ -101,6 +107,7 @@ class TiendaApplicationTests {
 
         });
         listaFaNom.forEach(System.out::println);
+
 	}
 	
 	/**
