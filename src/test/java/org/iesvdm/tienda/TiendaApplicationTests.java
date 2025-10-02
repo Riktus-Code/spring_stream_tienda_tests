@@ -4,6 +4,7 @@ import org.iesvdm.tienda.modelo.Fabricante;
 import org.iesvdm.tienda.modelo.Producto;
 import org.iesvdm.tienda.repository.FabricanteRepository;
 import org.iesvdm.tienda.repository.ProductoRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +38,7 @@ class TiendaApplicationTests {
 			System.out.println(">>"+p+":"+"\nProductos mismo fabricante "+ p.getFabricante());
 			p.getFabricante().getProductos().forEach(pF -> System.out.println(">>>>"+pF));
 		});
+		
 				
 	}
 
@@ -53,6 +55,8 @@ class TiendaApplicationTests {
 
 		listNomPre.forEach(s -> System.out.println(s));
 		
+		Assertions.assertEquals(11, listNomPre.size());
+		Assertions.assertTrue(listNomPre.contains("Nombre: Disco duro SATA3 1TB Precio: 86.99"));
 	}
 	
 	
