@@ -54,6 +54,9 @@ class TiendaApplicationTests {
 		var listNomPre = listProds.stream().map((s) -> "Nombre: "+s.getNombre()+" Precio: "+s.getPrecio()).toList();
 
 		listNomPre.forEach(s -> System.out.println(s));
+
+        Assertions.assertEquals(11, listNomPre.size());
+        Assertions.assertTrue(listNomPre.contains("Nombre: Disco duro SATA3 1TB Precio: 86.99"));
 		
 		Assertions.assertEquals(11, listNomPre.size());
 		Assertions.assertTrue(listNomPre.contains("Nombre: Disco duro SATA3 1TB Precio: 86.99"));
@@ -67,6 +70,14 @@ class TiendaApplicationTests {
 	void test2() {
 		var listProds = prodRepo.findAll();
 		//TODO
+
+        var listNomPre = listProds.stream().map((s) ->s.getNombre()+" con precio "+(s.getPrecio()*1.17)+"$").toList();
+        //lo podemos simplificar más aun usando esto.
+        listNomPre.forEach(System.out::println);
+        Assertions.assertEquals(11, listNomPre.size());
+        Assertions.assertTrue(listNomPre.contains("Impresora HP Laserjet Pro M26nw con precio 212.40$"));
+
+
 	}
 	
 	/**
@@ -76,6 +87,13 @@ class TiendaApplicationTests {
 	void test3() {
 		var listProds = prodRepo.findAll();
 		//TODO
+
+        var listNomPre = listProds.stream().map((s) -> "Nombre: "+(s.getNombre().toUpperCase())+" Precio: "+(s.getPrecio()*1.17)).toList();
+        //lo podemos simplificar más aun usando esto.
+        listNomPre.forEach(System.out::println);
+
+        Assertions.assertEquals(11, listNomPre.size());
+        Assertions.assertTrue(listNomPre.contains("Nombre: Disco duro SATA3 1TB Precio: 86.99"));
 	}
 	
 	/**
@@ -85,6 +103,14 @@ class TiendaApplicationTests {
 	void test4() {
 		var listFabs = fabRepo.findAll();
 		//TODO
+
+        var listaFaNom= listFabs.stream().map((s)-> { String nombre = s.getNombre();
+            String iniciales = nombre.substring(0, 2).toUpperCase();
+            return "Nombre: "+nombre+" Iniciales: "+iniciales;
+
+        });
+        listaFaNom.forEach(System.out::println);
+
 	}
 	
 	/**
@@ -93,7 +119,13 @@ class TiendaApplicationTests {
 	@Test
 	void test5() {
 		var listFabs = fabRepo.findAll();
-		//TODO		
+        var listProds = prodRepo.findAll();
+        var listaNumFab = listProds.stream().map((s)-> ("Código fabricante con producto: "+s.getFabricante().getCodigo())).toList();
+
+        listaNumFab.forEach(System.out::println);
+		//TODO
+
+
 	}
 	
 	/**
