@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.math.*;
 import java.util.List;
 
 
@@ -71,11 +73,16 @@ class TiendaApplicationTests {
 		var listProds = prodRepo.findAll();
 		//TODO
 
-        var listNomPre = listProds.stream().map((s) ->s.getNombre()+" con precio "+(s.getPrecio()*1.17)+"$").toList();
+        var listNomPre = listProds.stream().map(s -> s.getNombre() + " con precio " 
+		+ BigDecimal.valueOf(s.getPrecio()*1.17)
+																		.setScale(2,RoundingMode.HALF_UP)+"$"
+		)
+		.toList();
+														
         //lo podemos simplificar más aun usando esto.
         listNomPre.forEach(System.out::println);
         Assertions.assertEquals(11, listNomPre.size());
-        Assertions.assertTrue(listNomPre.contains("Impresora HP Laserjet Pro M26nw con precio 212.40$"));
+        Assertions.assertTrue(listNomPre.contains("Impresora HP Laserjet Pro M26nw con precio 210.60$"));
 
 
 	}
@@ -88,12 +95,12 @@ class TiendaApplicationTests {
 		var listProds = prodRepo.findAll();
 		//TODO
 
-        var listNomPre = listProds.stream().map((s) -> "Nombre: "+(s.getNombre().toUpperCase())+" Precio: "+(s.getPrecio()*1.17)).toList();
+        var listNomPre = listProds.stream().map((s) -> "Nombre: "+(s.getNombre().toUpperCase())+" Precio: "+(s.getPrecio())).toList();
         //lo podemos simplificar más aun usando esto.
         listNomPre.forEach(System.out::println);
 
         Assertions.assertEquals(11, listNomPre.size());
-        Assertions.assertTrue(listNomPre.contains("Nombre: Disco duro SATA3 1TB Precio: 86.99"));
+        Assertions.assertTrue(listNomPre.contains("Nombre: DISCO DURO SATA3 1TB Precio: 86.99"));
 	}
 	
 	/**
@@ -119,10 +126,10 @@ class TiendaApplicationTests {
 	@Test
 	void test5() {
 		var listFabs = fabRepo.findAll();
-        var listProds = prodRepo.findAll();
-        var listaNumFab = listProds.stream().map((s)-> ("Código fabricante con producto: "+s.getFabricante().getCodigo())).toList();
+        var listaNumFab = listFabs.stream().filter(f -> !f.getProductos().isEmpty()).map(s->s.getCodigo());
 
-        listaNumFab.forEach(System.out::println);
+		listaNumFab.forEach(System.out::println);
+       
 		//TODO
 
 
