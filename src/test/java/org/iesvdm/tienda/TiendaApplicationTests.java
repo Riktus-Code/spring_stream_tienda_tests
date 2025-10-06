@@ -359,7 +359,9 @@ class TiendaApplicationTests {
         setFab.add(3);
         setFab.add(5);
         var listaFiltradaSet = listProds.stream()
-                .filter(p->setFab.contains(getFabricante().getCodigo()))
+                .filter(p->setFab.contains(p.getFabricante().getCodigo())).toList();
+
+        listaFiltradaSet.forEach(s-> System.out.println(s));
 
 	}
 
@@ -384,6 +386,12 @@ class TiendaApplicationTests {
 	@Test
 	void test19() {
 		var listFabs = fabRepo.findAll();
+        var listaNomb = listFabs.stream()
+                .filter(f -> f.getNombre().charAt(0)=='S')
+                .map(f-> f.getNombre())
+                .toList();
+
+            listaNomb.forEach(System.out::println);
 		//TODOS
 	}
 
@@ -393,6 +401,14 @@ class TiendaApplicationTests {
 	@Test
 	void test20() {
 		var listProds = prodRepo.findAll();
+        var listaNomPr = listProds.stream()
+                .filter(p->p.getNombre().contains("Portátil"))
+                .map(p->p.getNombre())
+                .toList();
+
+        listaNomPr.forEach(System.out::println);
+        Assertions.assertEquals(2,listProds.size());
+        Assertions.assertTrue(listaNomPr.contains("Portátil Yoga 520"));
 		//TODO
 	}
 
