@@ -16,6 +16,7 @@ import static java.util.Comparator.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -134,7 +135,9 @@ class TiendaApplicationTests {
 	@Test
 	void test5() {
 		var listFabs = fabRepo.findAll();
-        var listaNumFab = listFabs.stream().filter(f -> !f.getProductos().isEmpty()).map(s->s.getCodigo()).toList();
+        var listaNumFab = listFabs.stream().filter(f -> !f.getProductos().isEmpty())
+                .map(s->s.getCodigo())
+                .toList();
 
 		listaNumFab.forEach(System.out::println);
 
@@ -212,7 +215,8 @@ class TiendaApplicationTests {
 	@Test
 	void test9() {
 		var listFabs = fabRepo.findAll();
-        var lista4Fab = listFabs.stream().skip(3)
+        var lista4Fab = listFabs.stream()
+                .skip(3)
                 .limit(2)
                 .map(s->s.getNombre())
                 .toList();
@@ -407,7 +411,7 @@ class TiendaApplicationTests {
                 .toList();
 
         listaNomPr.forEach(System.out::println);
-        Assertions.assertEquals(2,listProds.size());
+        Assertions.assertEquals(2,listaNomPr.size());
         Assertions.assertTrue(listaNomPr.contains("Portátil Yoga 520"));
 		//TODO
 	}
@@ -418,16 +422,33 @@ class TiendaApplicationTests {
 	@Test
 	void test21() {
 		var listProds = prodRepo.findAll();
-		//TODO
+        var listaProdNomPre = listProds.stream()
+                .filter(p->p.getNombre().contains("Monitor") && p.getPrecio()<215)
+                .map(p->p.getNombre())
+                .toList();
+
+        listaProdNomPre.forEach(System.out::println);
+        Assertions.assertEquals(1,listaProdNomPre.size());
+        Assertions.assertTrue(listaProdNomPre.contains("Monitor 24 LED Full HD"));
 	}
 
 	/**
 	 * 22. Lista el nombre y el precio de todos los productos que tengan un precio mayor o igual a 180€.
 	 * Ordene el resultado en primer lugar por el precio (en orden descendente) y en segundo lugar por el nombre (en orden ascendente).
 	 */
+    @Test
 	void test22() {
 		var listProds = prodRepo.findAll();
-		//TODO
+
+        var listaFiltrada = listProds.stream().filter(p->p.getPrecio()>=180)
+                .sorted(comparing((Producto p) ->p.getPrecio(),reverseOrder() )
+                        .thenComparing((Producto p)-> p.getNombre()))
+                .map(p-> p.getNombre()+" "+p.getPrecio())
+                .toList();
+
+        listaFiltrada.forEach(System.out::println);
+        Assertions.assertEquals(7,listaFiltrada.size());
+        Assertions.assertTrue(listaFiltrada.contains("GeForce GTX 1080 Xtreme 755.0"));
 	}
 
 	/**
@@ -437,6 +458,14 @@ class TiendaApplicationTests {
 	@Test
 	void test23() {
 		var listProds = prodRepo.findAll();
+        var listaAlf = listProds.stream()
+                .sorted(comparing((Producto f)-> f.getFabricante().getNombre()))
+                .map((p)-> p.getFabricante().getNombre()+" "+p.getNombre()+" "+p.getPrecio())
+                .toList();
+
+        listaAlf.forEach(System.out::println);
+        Assertions.assertEquals(11,listaAlf.size());
+        Assertions.assertTrue(listaAlf.contains("Crucial GeForce GTX 1080 Xtreme 755.0"));
 		//TODO
 	}
 
@@ -446,6 +475,16 @@ class TiendaApplicationTests {
 	@Test
 	void test24() {
 		var listProds = prodRepo.findAll();
+        var proCaro = listProds.stream()
+                .sorted(comparing((Producto p)->p.getPrecio(),reverseOrder()))
+                .limit(1)
+                .map(p-> p.getNombre()+" "+p.getPrecio()+" "+p.getFabricante().getNombre())
+                .toList();
+        proCaro.forEach(System.out::println);
+
+        Assertions.assertEquals(1,proCaro.size());
+        Assertions.assertTrue(proCaro.contains("GeForce GTX 1080 Xtreme 755.0 Crucial"));
+
 		//TODO
 	}
 
@@ -455,7 +494,15 @@ class TiendaApplicationTests {
 	@Test
 	void test25() {
 		var listProds = prodRepo.findAll();
-		//TODO
+		var listaCrucial = listProds.stream()
+                .filter(p->p.getFabricante().getNombre().equalsIgnoreCase("Crucial")
+                && p.getPrecio()>200)
+                .map(p->p.getNombre())
+                .toList();
+        listaCrucial.forEach(s-> System.out.println(s));
+        Assertions.assertEquals(1,listaCrucial.size());
+        Assertions.assertTrue(listaCrucial.contains("GeForce GTX 1080 Xtreme"));
+
 	}
 
 	/**
@@ -464,6 +511,15 @@ class TiendaApplicationTests {
 	@Test
 	void test26() {
 		var listProds = prodRepo.findAll();
+        var listaEspedifica = listProds.stream()
+                .filter(p->p.getFabricante().getNombre().equalsIgnoreCase("Asus")
+                        || p.getFabricante().getNombre().equalsIgnoreCase("Hewlett-Packard")
+                        || p.getFabricante().getNombre().equalsIgnoreCase("Seagate"))
+                .map(Producto::getNombre)
+                .toList();
+        listaEspedifica.forEach(System.out::println);
+        Assertions.assertEquals(5,listaEspedifica.size());
+        Assertions.assertTrue(listaEspedifica.contains("Disco duro SATA3 1TB"));
 		//TODO
 	}
 
@@ -484,7 +540,21 @@ Monitor 27 LED Full HD |199.25190000000003|Asus
 	@Test
 	void test27() {
 		var listProds = prodRepo.findAll();
-		//TODO
+        System.out.println("Producto                Precio             Fabricante");
+        System.out.println("-----------------------------------------------------");
+        var listaPro = listProds.stream()
+                .filter(p->p.getPrecio()>=180)
+                .sorted(comparing((Producto p)->p.getPrecio(),reverseOrder())
+                        .thenComparing((Producto p)->p.getNombre()))
+                .map(p->String.format("%-22s|%-18s|%s",
+                        p.getNombre(),
+                        p.getPrecio(),
+                        p.getFabricante().getNombre()))
+                .toList();
+
+        listaPro.forEach(s-> System.out.println(s));
+
+
 	}
 
 	/**
@@ -544,6 +614,15 @@ Fabricante: Xiaomi
 	@Test
 	void test28() {
 		var listFabs = fabRepo.findAll();
+
+        var listaFil = listFabs.stream()
+                .map(f-> "Fabricante: "+f.getNombre()+"\n\tProductos: \n\t"+f.getProductos()
+                        .stream()
+                        .map(p->p.getNombre())
+                        .collect(Collectors.joining()))
+                .toList();
+
+        listaFil.forEach(s-> System.out.println(s));
 		//TODO
 	}
 
