@@ -686,6 +686,7 @@ Fabricante: Xiaomi
         }
 	}
 
+
 	/**
 	 * 32. Calcula la media del precio de todos los productos
 	 */
