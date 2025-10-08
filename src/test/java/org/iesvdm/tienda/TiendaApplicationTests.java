@@ -701,6 +701,8 @@ Fabricante: Xiaomi
                 .sum();
 
         System.out.println((sumaPrecio/contarPro));
+        Assertions.assertEquals(11,sumaPrecio);
+
 		//TODO
 	}
 
@@ -710,6 +712,12 @@ Fabricante: Xiaomi
 	@Test
 	void test33() {
 		var listProds = prodRepo.findAll();
+        var minPrecio = listProds.stream()
+                .mapToDouble(p->p.getPrecio())
+                .min();
+        System.out.println(minPrecio);
+        Assertions.assertEquals(11,minPrecio);
+
 		//TODO
 	}
 
@@ -719,6 +727,13 @@ Fabricante: Xiaomi
 	@Test
 	void test34() {
 		var listProds = prodRepo.findAll();
+        var sumaPrecio = listProds.stream()
+                .mapToDouble(p->p.getPrecio())
+                .sum();
+
+        System.out.println(sumaPrecio);
+
+
 		//TODO
 	}
 
@@ -728,6 +743,12 @@ Fabricante: Xiaomi
 	@Test
 	void test35() {
 		var listProds = prodRepo.findAll();
+
+        var listaAsus = listProds.stream()
+                .filter(f->f.getFabricante().getNombre().equalsIgnoreCase("Asus"))
+                .count();
+
+        System.out.println(listaAsus);
 		//TODO
 	}
 
