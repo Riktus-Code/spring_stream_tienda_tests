@@ -263,7 +263,19 @@ class TiendaApplicationTests {
         listaNomCar.forEach(System.out::println);
         Assertions.assertEquals(1,listaNomCar.size());
         Assertions.assertTrue(listaNomCar.contains("GeForce GTX 1080 Xtreme 755.0"));
-
+        //Otro tipo de hacerlo
+        /*
+        * Optional <Producto> prodOut = listProds.stream()
+        * .sorted(
+        *        comparing(p-> p.getPrecio(), reverseOrder())
+        * )findFirst();
+        * al hacer el findFirst tenemos que meter lo que nos devuelva en un Optional
+        * luego hacemos al condicion isPresent para saber si hay algo e imprimirlo
+        * if(prodOut.isPresent()){
+        * Producto prod = prodOut.get();
+        * System.out.println(prod.getNombre()+ " " +prod.getPrecio());
+        * }
+        * */
 
 		//TODO
 	}
@@ -619,10 +631,12 @@ Fabricante: Xiaomi
                 .map(f-> "Fabricante: "+f.getNombre()+"\n\tProductos: \n\t"+f.getProductos()
                         .stream()
                         .map(p->p.getNombre())
-                        .collect(Collectors.joining()))
+                        .collect(Collectors.joining("\n\t")))
                 .toList();
 
         listaFil.forEach(s-> System.out.println(s));
+        Assertions.assertEquals(9,listaFil.size());
+
 		//TODO
 	}
 
@@ -632,6 +646,12 @@ Fabricante: Xiaomi
 	@Test
 	void test29() {
 		var listFabs = fabRepo.findAll();
+        var listaFabNoPro = listFabs.stream().filter(x->x.getProductos().isEmpty())
+                .map(f->f.getNombre())
+                .toList();
+        listaFabNoPro.forEach(System.out::println);
+        Assertions.assertEquals(2,listaFabNoPro.size());
+        Assertions.assertTrue(listaFabNoPro.contains("Huawei"));
 		//TODO
 	}
 
@@ -641,6 +661,12 @@ Fabricante: Xiaomi
 	@Test
 	void test30() {
 		var listProds = prodRepo.findAll();
+
+        var total = listProds.stream()
+                .count();
+
+        System.out.println("Total: "+total);
+        Assertions.assertEquals(11,total);
 		//TODO
 	}
 
@@ -651,7 +677,13 @@ Fabricante: Xiaomi
 	@Test
 	void test31() {
 		var listProds = prodRepo.findAll();
-		//TODO
+        var numFab = listProds.stream()
+                .mapToInt(p->p.getFabricante().getCodigo())
+                .max();
+        if(numFab.isPresent()) {
+            System.out.println(numFab.getAsInt());
+            //TODO
+        }
 	}
 
 	/**
@@ -660,6 +692,14 @@ Fabricante: Xiaomi
 	@Test
 	void test32() {
 		var listProds = prodRepo.findAll();
+        var contarPro = listProds.stream()
+                .count();
+
+        var sumaPrecio = listProds.stream()
+                .mapToDouble(p->p.getPrecio())
+                .sum();
+
+        System.out.println((sumaPrecio/contarPro));
 		//TODO
 	}
 

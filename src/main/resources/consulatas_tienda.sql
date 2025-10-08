@@ -55,13 +55,19 @@ SELECT UPPER(nombre), precio FROM producto;
     select * from producto p where p.precio>=80 && p.precio<=300;
 
 -- 16. Lista todos los productos que tengan un precio mayor que 200€ y que el código de fabricante sea igual a 6.
-
+    select * from producto p where p.precio>200 and p.codigo_fabricante=6;
 -- 17. Lista todos los productos donde el código de fabricante sea 1, 3 o 5 utilizando un Set de codigos de fabricantes para filtrar.
+    select * from producto p where p.codigo_fabricante in (1,3,5);
 -- 18. Lista el nombre y el precio de los productos en céntimos.
+
 -- 19. Lista los nombres de los fabricantes cuyo nombre empiece por la letra S
+
 -- 20. Devuelve una lista con los productos que contienen la cadena Portátil en el nombre.
+
 -- 21. Devuelve una lista con el nombre de todos los productos que contienen la cadena Monitor en el nombre y tienen un precio inferior a 215 €.
+
 -- 22. Lista el nombre y el precio de todos los productos que tengan un precio mayor o igual a 180€. Ordene el resultado en primer lugar por el precio (en orden descendente) y en segundo lugar por el nombre (en orden ascendente).
+
 -- 23. Devuelve una lista con el nombre del producto, precio y nombre de fabricante de todos los productos de la base de datos. Ordene el resultado por el nombre del fabricante, por orden alfabético.
 -- 24. Devuelve el nombre del producto, su precio y el nombre de su fabricante, del producto más caro.
 -- 25. Devuelve una lista de todos los productos del fabricante Crucial que tengan un precio mayor que 200€.
