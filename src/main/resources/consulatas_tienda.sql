@@ -61,27 +61,27 @@ SELECT UPPER(nombre), precio FROM producto;
 -- 18. Lista el nombre y el precio de los productos en céntimos.
     select p.nombre, (p.precio*100) from producto p;
 -- 19. Lista los nombres de los fabricantes cuyo nombre empiece por la letra S
-select f.nombre from fabricante f where f.nombre like 'S%'
+    select f.nombre from fabricante f where f.nombre like 'S%';
 -- 20. Devuelve una lista con los productos que contienen la cadena Portátil en el nombre.
-    select * from producto p where p.nombre like '%Portátil%'
+    select * from producto p where p.nombre like '%Portátil%';
 -- 21. Devuelve una lista con el nombre de todos los productos que contienen la cadena Monitor en el nombre y tienen un precio inferior a 215 €.
     select p.nombre from producto p where p.nombre like '%Monitor%' and p.precio <215;
 -- 22. Lista el nombre y el precio de todos los productos que tengan un precio mayor o igual a 180€. Ordene el resultado en primer lugar por el precio (en orden descendente) y en segundo lugar por el nombre (en orden ascendente).
     select p.nombre from producto p where p.precio >=180 order by p.precio desc, p.nombre asc;
 -- 23. Devuelve una lista con el nombre del producto, precio y nombre de fabricante de todos los productos de la base de datos. Ordene el resultado por el nombre del fabricante, por orden alfabético.
-    select p.nombre, p.precio, f.nombre where producto p inner join fabricante f on f.codigo = p.codigo_fabricante;
+    select p.nombre, p.precio, f.nombre from producto p inner join fabricante f on f.codigo = p.codigo_fabricante;
 -- 24. Devuelve el nombre del producto, su precio y el nombre de su fabricante, del producto más caro.
-select p.nombre, p.precio, f.nombre where producto p inner join fabricante f on f.codigo = p.codigo_fabricante order by p.precio desc limit 1;
+    select p.nombre, p.precio, f.nombre from producto p inner join fabricante f on f.codigo = p.codigo_fabricante order by p.precio desc limit 1;
 -- 25. Devuelve una lista de todos los productos del fabricante Crucial que tengan un precio mayor que 200€.
     select p.nombre, p.precio from producto p inner join fabricante f on p.codigo_fabricante=f.codigo where f.nombre='Crucial' and p.precio>200;
 -- 26. Devuelve un listado con todos los productos de los fabricantes Asus, Hewlett-Packard y Seagate.
-select p.nombre, p.precio from producto p inner join fabricante f on p.codigo_fabricante=f.codigo where f.nombre in ('Asus',' Hewlett-Packard','Seagate');
+    select p.nombre, p.precio from producto p inner join fabricante f on p.codigo_fabricante=f.codigo where f.nombre in ('Asus',' Hewlett-Packard','Seagate');
 -- 27. Devuelve un listado con el nombre de producto, precio y nombre de fabricante, de todos los productos que tengan un precio mayor o igual a 180€. Ordene el resultado en primer lugar por el precio (en orden descendente) y en segundo lugar por el nombre.
-select p.nombre, p.precio, f.nombre where producto p inner join fabricante f on f.codigo = p.codigo_fabricante where p.precio >=180 order by p.precio desc, p.nombre asc;
+    select p.nombre, p.precio, f.nombre from producto p inner join fabricante f on f.codigo = p.codigo_fabricante where p.precio >=180 order by p.precio desc, p.nombre asc;
 -- 28. Devuelve un listado de los nombres fabricantes que existen en la base de datos, junto con los nombres productos que tiene cada uno de ellos. El listado deberá mostrar también aquellos fabricantes que no tienen productos asociados.
     select f.nombre, p.nombre from fabricante f inner join producto p on f.codigo = p.codigo_fabricante;
 -- 29. Devuelve un listado donde sólo aparezcan aquellos fabricantes que no tienen ningún producto asociado.
-select f.nombre, p.nombre from fabricante f inner join producto p on f.codigo = p.codigo_fabricante where p.codigo_fabricante is null;
+    select f.nombre, p.nombre from fabricante f inner join producto p on f.codigo = p.codigo_fabricante where p.codigo_fabricante is null;
 
 -- 30. Calcula el número total de productos que hay en la tabla productos. Utiliza la api de stream.
 select count(p.codigo) from producto;

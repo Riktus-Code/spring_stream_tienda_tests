@@ -10,13 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.*;
-import java.util.ArrayList;
+import java.util.*;
+
 import static java.util.Comparator.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @SpringBootTest
@@ -136,7 +135,7 @@ class TiendaApplicationTests {
 	void test5() {
 		var listFabs = fabRepo.findAll();
         var listaNumFab = listFabs.stream().filter(f -> !f.getProductos().isEmpty())
-                .map(s->s.getCodigo())
+                .map(s-> (Integer) s.getCodigo())
                 .toList();
 
 		listaNumFab.forEach(System.out::println);
@@ -144,6 +143,7 @@ class TiendaApplicationTests {
 		//TODO
         Assertions.assertEquals(7,listaNumFab.size());
         Assertions.assertTrue(listaNumFab.contains(7));
+
 
 	}
 
@@ -174,7 +174,7 @@ class TiendaApplicationTests {
 		var listProds = prodRepo.findAll();
         var listaNombres =listProds.stream().
                 sorted(comparing((Producto p) -> p.getNombre())
-                        .thenComparing((Producto p) ->p.getPrecio(),reverseOrder()))
+                        .thenComparing((Producto p) -> (Double) p.getPrecio(),reverseOrder()))
                 .map(p->p.getNombre() +" "+p.getPrecio()).
                 toList();
 
@@ -684,6 +684,7 @@ Fabricante: Xiaomi
             System.out.println(numFab.getAsInt());
             //TODO
         }
+        Assertions.assertEquals(7,numFab);
 	}
 
 
@@ -758,7 +759,20 @@ Fabricante: Xiaomi
 	@Test
 	void test36() {
 		var listProds = prodRepo.findAll();
-		//TODO
+
+        var contarProd = listProds.stream()
+                .filter(p->p.getFabricante().getNombre().equalsIgnoreCase("Asus"))
+                .count();
+
+        var mediaAsus = listProds.stream()
+                .filter(p->p.getFabricante().getNombre().equalsIgnoreCase("Asus"))
+                .mapToDouble(p->p.getPrecio())
+                .sum();
+        System.out.println("Media: "+(mediaAsus/contarProd));
+        Assertions.assertEquals(447.99,mediaAsus);
+        Assertions.assertEquals(2,contarProd);
+
+        //TODO
 	}
 
 
@@ -769,6 +783,42 @@ Fabricante: Xiaomi
 	@Test
 	void test37() {
 		var listProds = prodRepo.findAll();
+
+       var sumaryStatictics =  listProds.stream()
+                .filter(p->p.getFabricante().getNombre().equalsIgnoreCase("Crucial"))
+                .mapToDouble(p->p.getPrecio())
+                .summaryStatistics();
+
+       System.out.println(sumaryStatictics);
+
+        double [] estadisticas = listProds.stream()
+                .filter(p->p.getFabricante().getNombre().equalsIgnoreCase("Crucial"))
+                .map(producto -> new double[]{producto.getPrecio(),producto.getPrecio(),producto.getPrecio(),0})
+                .reduce(new double[]{Double.MAX_VALUE/*min*/,0.0/*max*/,0.0/*sum*/,0.0/*count*/},(a,b) -> {
+                    double minAct=0.0;
+                    double maxAct = 0.0;
+                    double sumAct=0.0;
+                    double minAnt = (Double) a[0];
+                    double countAct = 0.0;
+                    if((Double)b[0]<minAnt){
+                    minAct= (Double)b[0] ;
+                    }else{
+                        minAct=minAnt;
+                    }
+
+                    double maxAnt = (Double) a[1];
+                    if((Double)b[1]>maxAnt){
+                        maxAct=(Double)b[1];
+
+                    }
+                    double sumAnt = (Double) a[2];
+                    sumAct=sumAnt+b[2];
+                    double countAnt = (Double) a[3];
+                     countAct = countAnt + 1;
+
+                     return new double[]{minAct,maxAct,sumAct,countAct};
+                });
+        System.out.println(Arrays.toString(estadisticas));
 		//TODO
 
 
@@ -797,6 +847,17 @@ Hewlett-Packard              2
 	@Test
 	void test38() {
 		var listFabs = fabRepo.findAll();
+        var listProFa= listFabs.stream()
+                .map(f->String.format("%-15s %12d%n",
+                        f.getNombre(),
+                        f.getProductos().size()))
+                .toList();
+        System.out.format("%-15s %12s%n", "Fabricante", "#Productos");
+        System.out.println("-*".repeat(55));
+        listProFa.forEach(System.out::println);
+
+
+
 
 
 		//TODO
@@ -810,6 +871,16 @@ Hewlett-Packard              2
 	@Test
 	void test39() {
 		var listFabs = fabRepo.findAll();
+        var listaCompleta = listFabs.stream()
+                .map(f->f.getNombre()+" "+f.getProductos()
+                        .stream()
+                        .mapToDouble(p->p.getPrecio())
+                        .summaryStatistics())
+                .toList();
+
+        listaCompleta.forEach(s-> System.out.println(s));
+		Assertions.assertEquals(9,listaCompleta.size());
+		Assertions.assertTrue(listaCompleta.contains("Gigabyte DoubleSummaryStatistics{count=1, sum=185,000000, min=185,000000, average=185,000000, max=185,000000}"));
 		//TODO
 	}
 
@@ -820,6 +891,21 @@ Hewlett-Packard              2
 	@Test
 	void test40() {
 		var listFabs = fabRepo.findAll();
+		var listaCompleta = listFabs.stream()
+				.filter(f->f.getProductos()
+						.stream()
+						.mapToDouble(p->p.getPrecio())
+						.average().orElse(0)>200)
+				.map(f->f.getCodigo()+" "+f.getProductos()
+						.stream()
+						.mapToDouble(p->p.getPrecio())
+						.summaryStatistics())
+				.toList();
+
+			listaCompleta.forEach(s-> System.out.println(s));
+			Assertions.assertEquals(3,listFabs.size());
+			Assertions.assertTrue(listaCompleta.contains(" 1 DoubleSummaryStatistics{count=2, sum=447,990000, min=202,000000, average=223,995000, max=245,990000}"));
+
 		//TODO
 	}
 
@@ -829,6 +915,14 @@ Hewlett-Packard              2
 	@Test
 	void test41() {
 		var listFabs = fabRepo.findAll();
+        var listFaPro = listFabs.stream()
+                .filter(f->f.getProductos().size()>1)
+                .map(f->f.getNombre())
+                .toList();
+
+        listFaPro.forEach(System.out::println);
+        Assertions.assertEquals(4,listFaPro.size());
+        Assertions.assertTrue(listFaPro.contains("Asus"));
 		//TODO
 	}
 
@@ -839,6 +933,39 @@ Hewlett-Packard              2
 	@Test
 	void test42() {
 		var listFabs = fabRepo.findAll();
+
+		//
+		var listadoFab = listFabs.stream()
+				//metemos el nombre del fabricante y la cantidad de productos en un array
+				.map(f->new Object[]{
+						f.getNombre(),
+						f.getProductos()
+								.stream()
+								.filter(p->p.getPrecio()>220)
+								.count()
+				})
+				//luego ordenamos el Array usando la clase Long y compare
+				.sorted((a,b)->Integer.compare((Integer) b[1],(Integer)a[1]))
+				.toList();
+
+				listadoFab.forEach(s-> System.out.println(Arrays.toString(s)));
+				Assertions.assertEquals(9,listadoFab.size());
+
+
+
+		/*Hecho por la ia
+		var listadoFab = listFabs.stream()
+				.map(f->Map.entry(f.getNombre(),
+								f.getProductos().stream()
+										.filter(p->p.getPrecio()>220)
+										.count()))
+				.sorted(Map.Entry.<String,Long>comparingByValue().reversed())
+				.toList();
+		*/
+
+
+
+
 		//TODO
 	}
 
@@ -848,7 +975,19 @@ Hewlett-Packard              2
 	@Test
 	void test43() {
 		var listFabs = fabRepo.findAll();
-		//TODO
+
+		var listaSuma = listFabs.stream()
+				.filter(f->f.getProductos()
+						.stream()
+						.mapToDouble(p->p.getPrecio())
+						.sum()>1000)
+				.map(f->f.getNombre())
+				.toList();
+
+		listaSuma.forEach(s-> System.out.println(s));
+		Assertions.assertEquals(1,listaSuma.size());
+		Assertions.assertTrue(listaSuma.contains("Lenovo"));
+	//TODO
 	}
 
 	/**
@@ -858,6 +997,24 @@ Hewlett-Packard              2
 	@Test
 	void test44() {
 		var listFabs = fabRepo.findAll();
+
+		var lista2 = listFabs.stream()
+				.map(f->new Object[]{
+						f.getNombre(),
+						f.getProductos()
+								.stream()
+								.mapToDouble(p->p.getPrecio())
+								.sum()
+				})
+				.filter(x->(Double) x[1]>1000)
+				.sorted((a,b)->Double.compare((Double) b[1],(Double) a[1]))
+				.toList();
+
+			lista2.forEach(s-> System.out.println(Arrays.toString(s)));
+			Assertions.assertEquals(1,lista2.size());
+
+
+
 		//TODO
 	}
 
@@ -880,6 +1037,17 @@ Hewlett-Packard              2
 	void test46() {
 		var listFabs = fabRepo.findAll();
 		//TODO
-	}
 
+    }
+
+
+    @Test
+    void testReduce(){
+    //Ejemplo de 'reduce', como funciona, se va sumando todos los elementos entre sí, para dejarte solo un valor.
+       int sumaTotal =  Stream.of(1,2,3,4)
+               .reduce(0,(a,b)->a+b);
+
+
+
+    }
 }
