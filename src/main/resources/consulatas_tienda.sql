@@ -155,3 +155,5 @@ WHERE p.precio >= (
     WHERE codigo_fabricante = p.codigo_fabricante
 )
 ORDER BY f.nombre ASC, p.precio DESC;
+
+--12
