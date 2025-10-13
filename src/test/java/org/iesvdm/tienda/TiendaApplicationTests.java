@@ -1026,6 +1026,23 @@ Hewlett-Packard              2
 	@Test
 	void test45() {
 		var listFabs = fabRepo.findAll();
+
+        var listadoNom = listFabs.stream()
+                .map(f->f.getProductos()
+                        .stream()
+                        .max(Comparator.comparingDouble(p->p.getPrecio()))
+                        .map(pr->new Object[]{pr.getNombre(),pr.getPrecio(),f.getNombre()}))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .sorted(comparing(ar->(String) ar[2]))
+                .toList();
+
+
+        listadoNom.forEach(ar-> System.out.println("Producto: "+ar[0]+" Precio: "+ar[1]+" Fabricante: "+ar[2]));
+
+        Assertions.assertEquals(7,listadoNom.size());
+
+
 		//TODO
 	}
 
@@ -1035,8 +1052,30 @@ Hewlett-Packard              2
 	 */
 	@Test
 	void test46() {
-		var listFabs = fabRepo.findAll();
-		//TODO
+
+        var listFabs = fabRepo.findAll();
+        var listaMedia = listFabs.stream()
+                .flatMap(f->{
+            var media = f.getProductos()
+                    .stream()
+                    .mapToDouble(p->p.getPrecio())
+                    .average()
+                    .orElse(0);
+            return f.getProductos()
+                    .stream()
+                    .filter(p->p.getPrecio()>media)
+                    .sorted(Comparator.comparingDouble((Producto p)->p.getPrecio()).reversed())
+                    //si esta mal asi, solo hay que meterlo en un array
+                    .map(p->new Object[]{ f.getNombre(),p.getNombre(),p.getPrecio()});
+        })
+                .sorted(Comparator.comparing(ar->(String) ar[0]))
+                .toList();
+
+        listaMedia.forEach(ar-> System.out.println("Fabricante: "+ar[0]+" Producto: "+ar[1]+" Precio "+ar[2]));
+
+        Assertions.assertEquals(4,listaMedia.size());
+        //TODO
+
 
     }
 
