@@ -156,4 +156,3 @@ WHERE p.precio >= (
 )
 ORDER BY f.nombre ASC, p.precio DESC;
 
---12

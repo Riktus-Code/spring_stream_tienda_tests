@@ -13,6 +13,7 @@ import java.math.*;
 import java.util.*;
 
 import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -631,7 +632,7 @@ Fabricante: Xiaomi
                 .map(f-> "Fabricante: "+f.getNombre()+"\n\tProductos: \n\t"+f.getProductos()
                         .stream()
                         .map(p->p.getNombre())
-                        .collect(Collectors.joining("\n\t")))
+                        .collect(joining("\n\t")))
                 .toList();
 
         listaFil.forEach(s-> System.out.println(s));
@@ -934,37 +935,23 @@ Hewlett-Packard              2
 	void test42() {
 		var listFabs = fabRepo.findAll();
 
-		//
+		record miVector (String nomFab, long contProd){};
+
 		var listadoFab = listFabs.stream()
 				//metemos el nombre del fabricante y la cantidad de productos en un array
-				.map(f->new Object[]{
+				.map(f->new miVector(
 						f.getNombre(),
 						f.getProductos()
 								.stream()
 								.filter(p->p.getPrecio()>220)
-								.count()
-				})
-				//luego ordenamos el Array usando la clase Long y compare
-				.sorted((a,b)->Integer.compare((Integer) b[1],(Integer)a[1]))
+								.count())
+				)
+
+				.sorted(comparing(a-> a.contProd,reverseOrder()))
 				.toList();
 
-				listadoFab.forEach(s-> System.out.println(Arrays.toString(s)));
+				listadoFab.forEach(s-> System.out.println(s));
 				Assertions.assertEquals(9,listadoFab.size());
-
-
-
-		/*Hecho por la ia
-		var listadoFab = listFabs.stream()
-				.map(f->Map.entry(f.getNombre(),
-								f.getProductos().stream()
-										.filter(p->p.getPrecio()>220)
-										.count()))
-				.sorted(Map.Entry.<String,Long>comparingByValue().reversed())
-				.toList();
-		*/
-
-
-
 
 		//TODO
 	}
@@ -1065,7 +1052,6 @@ Hewlett-Packard              2
                     .stream()
                     .filter(p->p.getPrecio()>media)
                     .sorted(Comparator.comparingDouble((Producto p)->p.getPrecio()).reversed())
-                    //si esta mal asi, solo hay que meterlo en un array
                     .map(p->new Object[]{ f.getNombre(),p.getNombre(),p.getPrecio()});
         })
                 .sorted(Comparator.comparing(ar->(String) ar[0]))
@@ -1086,7 +1072,14 @@ Hewlett-Packard              2
        int sumaTotal =  Stream.of(1,2,3,4)
                .reduce(0,(a,b)->a+b);
 
+    }
 
 
+    @Test
+    void testJoining(){
+        String hola = Stream.of("Hola","Mundo")
+        .collect(joining(", ",">","!"));
+
+        System.out.println(hola);
     }
 }
