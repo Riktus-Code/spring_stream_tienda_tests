@@ -553,13 +553,13 @@ Monitor 27 LED Full HD |199.25190000000003|Asus
 	@Test
 	void test27() {
 		var listProds = prodRepo.findAll();
-        System.out.println("Producto                Precio             Fabricante");
-        System.out.println("-----------------------------------------------------");
+        System.out.println("Producto                       Precio  Fabricante");
+        System.out.println("-------------------------------------------------");
         var listaPro = listProds.stream()
                 .filter(p->p.getPrecio()>=180)
                 .sorted(comparing((Producto p)->p.getPrecio(),reverseOrder())
                         .thenComparing((Producto p)->p.getNombre()))
-                .map(p->String.format("%-22s|%-18s|%s",
+                .map(p->String.format("%-31s|%-6s|%s",
                         p.getNombre(),
                         p.getPrecio(),
                         p.getFabricante().getNombre()))
@@ -984,20 +984,20 @@ Hewlett-Packard              2
 	@Test
 	void test44() {
 		var listFabs = fabRepo.findAll();
-
+        record vectorLista (String nomPro, double precPro){};
 		var lista2 = listFabs.stream()
-				.map(f->new Object[]{
+				.map(f->new vectorLista(
 						f.getNombre(),
 						f.getProductos()
 								.stream()
 								.mapToDouble(p->p.getPrecio())
 								.sum()
-				})
-				.filter(x->(Double) x[1]>1000)
-				.sorted((a,b)->Double.compare((Double) b[1],(Double) a[1]))
+				))
+				.filter(x-> x.precPro>1000)
+				.sorted((a,b)->Double.compare((Double) b.precPro,(Double) a.precPro))
 				.toList();
 
-			lista2.forEach(s-> System.out.println(Arrays.toString(s)));
+			lista2.forEach(s-> System.out.println("Fabricante: "+s.nomPro+" Precio sumado: "+s.precPro));
 			Assertions.assertEquals(1,lista2.size());
 
 
@@ -1013,19 +1013,19 @@ Hewlett-Packard              2
 	@Test
 	void test45() {
 		var listFabs = fabRepo.findAll();
-
+        record miVec (String nombrePro, double precioPro, String nombreFab){};
         var listadoNom = listFabs.stream()
                 .map(f->f.getProductos()
                         .stream()
                         .max(Comparator.comparingDouble(p->p.getPrecio()))
-                        .map(pr->new Object[]{pr.getNombre(),pr.getPrecio(),f.getNombre()}))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .sorted(comparing(ar->(String) ar[2]))
+                        .map(pr->new miVec(pr.getNombre(),pr.getPrecio(),f.getNombre())))
+                .filter(o->o.isPresent())
+                .map(o->o.get())
+                .sorted(comparing(ar-> ar.nombreFab))
                 .toList();
 
 
-        listadoNom.forEach(ar-> System.out.println("Producto: "+ar[0]+" Precio: "+ar[1]+" Fabricante: "+ar[2]));
+        listadoNom.forEach(ar-> System.out.println("Producto: "+ar.nombrePro+" Precio: "+ar.precioPro+" Fabricante: "+ar.nombreFab));
 
         Assertions.assertEquals(7,listadoNom.size());
 
@@ -1039,7 +1039,7 @@ Hewlett-Packard              2
 	 */
 	@Test
 	void test46() {
-
+        record vectorMax (String nomFab, String nomPro, double precPro){};
         var listFabs = fabRepo.findAll();
         var listaMedia = listFabs.stream()
                 .flatMap(f->{
@@ -1052,12 +1052,12 @@ Hewlett-Packard              2
                     .stream()
                     .filter(p->p.getPrecio()>media)
                     .sorted(Comparator.comparingDouble((Producto p)->p.getPrecio()).reversed())
-                    .map(p->new Object[]{ f.getNombre(),p.getNombre(),p.getPrecio()});
+                    .map(p->new vectorMax( f.getNombre(),p.getNombre(),p.getPrecio()));
         })
-                .sorted(Comparator.comparing(ar->(String) ar[0]))
+                .sorted(Comparator.comparing(ar-> ar.nomFab))
                 .toList();
 
-        listaMedia.forEach(ar-> System.out.println("Fabricante: "+ar[0]+" Producto: "+ar[1]+" Precio "+ar[2]));
+        listaMedia.forEach(ar-> System.out.println("Fabricante: "+ar.nomFab+" Producto: "+ar.nomPro+" Precio "+ar.precPro));
 
         Assertions.assertEquals(4,listaMedia.size());
         //TODO
