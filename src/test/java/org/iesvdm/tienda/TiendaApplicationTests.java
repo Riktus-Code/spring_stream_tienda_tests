@@ -820,6 +820,8 @@ Fabricante: Xiaomi
                      return new double[]{minAct,maxAct,sumAct,countAct};
                 });
         System.out.println(Arrays.toString(estadisticas));
+
+
 		//TODO
 
 
@@ -856,7 +858,7 @@ Hewlett-Packard              2
         System.out.format("%-15s %12s%n", "Fabricante", "#Productos");
         System.out.println("-*".repeat(55));
         listProFa.forEach(System.out::println);
-
+        Assertions.assertEquals(9,listProFa.size());
 
 
 
