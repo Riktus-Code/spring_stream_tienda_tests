@@ -734,6 +734,7 @@ Fabricante: Xiaomi
                 .sum();
 
         System.out.println(sumaPrecio);
+		Assertions.assertEquals(2988.96,sumaPrecio,0.0001);
 
 
 		//TODO
@@ -751,6 +752,7 @@ Fabricante: Xiaomi
                 .count();
 
         System.out.println(listaAsus);
+		Assertions.assertEquals(2,listaAsus);
 		//TODO
 	}
 
@@ -820,6 +822,8 @@ Fabricante: Xiaomi
                      return new double[]{minAct,maxAct,sumAct,countAct};
                 });
         System.out.println(Arrays.toString(estadisticas));
+
+		Assertions.assertEquals(120.0,estadisticas[0],0.0001);
 
 
 		//TODO

@@ -84,7 +84,7 @@ SELECT UPPER(nombre), precio FROM producto;
     select f.nombre, p.nombre from fabricante f inner join producto p on f.codigo = p.codigo_fabricante where p.codigo_fabricante is null;
 
 -- 30. Calcula el número total de productos que hay en la tabla productos. Utiliza la api de stream.
-select count(p.codigo) from producto;
+select count(p.codigo) as cantidad_producto from producto p ;
 -- 31. Calcula el número de fabricantes con productos, utilizando un stream de Productos.
 SELECT count(p.codigo_fabricante) as fabricante_con_producto from producto p ;
 -- 32. Calcula la media del precio de todos los productos
